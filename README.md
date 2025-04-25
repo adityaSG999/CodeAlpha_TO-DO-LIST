@@ -8,6 +8,10 @@ A clean and responsive To-Do List app using **HTML, CSS, and JavaScript**.
 - Tasks saved using `localStorage`
 - Responsive and modern UI
 
+![image](https://github.com/user-attachments/assets/148827d3-166c-4087-acb1-dfa293a358be)
+![image](https://github.com/user-attachments/assets/0d42a038-fe31-4cb8-bd2d-d6defbdcfcf9)
+
+
 ## 🛠 Tech Stack
 
 - HTML5
