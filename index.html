@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #6dd5ed, #2193b0);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding-top: 40px;
+    }
+
+    .todo-container {
+      background: #fff;
+      width: 90%;
+      max-width: 500px;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-add {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .btn-add:hover {
+      background-color: #45a049;
+    }
+
+    #taskList {
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background: #f9f9f9;
+      transition: background 0.3s;
+      word-break: break-word;
+    }
+
+    li .task-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .task-text {
+      font-size: 16px;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    .task-status {
+      font-size: 13px;
+      color: #555;
+    }
+
+    .completed .task-status {
+      color: green;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-left: 10px;
+    }
+
+    .btn-delete {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background-color: #c0392b;
+    }
+      
+    #taskList::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #taskList::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="todo-container">
+    <h1>📋 My To-Do List</h1>
+    <div class="input-group">
+      <input type="text" id="taskInput" placeholder="Enter your task...">
+      <button class="btn-add" onclick="addTask()">Add</button>
+    </div>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById('taskInput');
+    const taskList = document.getElementById('taskList');
+
+    window.onload = () => {
+      const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      savedTasks.forEach(task => createTask(task.text, task.completed));
+    };
+
+    function saveTasks() {
+      const tasks = [];
+      document.querySelectorAll('li').forEach(li => {
+        tasks.push({
+          text: li.querySelector('.task-text').textContent,
+          completed: li.classList.contains('completed')
+        });
+      });
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function createTask(taskText, isCompleted = false) {
+      const li = document.createElement('li');
+      if (isCompleted) li.classList.add('completed');
+
+      const taskInfo = document.createElement('div');
+      taskInfo.className = 'task-info';
+      taskInfo.onclick = () => {
+        li.classList.toggle('completed');
+        updateStatusText(statusSpan, li.classList.contains('completed'));
+        saveTasks();
+      };
+
+      const spanText = document.createElement('span');
+      spanText.className = 'task-text';
+      spanText.textContent = taskText;
+
+      const statusSpan = document.createElement('span');
+      statusSpan.className = 'task-status';
+      updateStatusText(statusSpan, isCompleted);
+
+      taskInfo.appendChild(spanText);
+      taskInfo.appendChild(statusSpan);
+
+      const actions = document.createElement('div');
+      actions.className = 'actions';
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.className = 'btn-delete';
+      deleteBtn.onclick = () => {
+        li.remove();
+        saveTasks();
+      };
+
+      actions.appendChild(deleteBtn);
+
+      li.appendChild(taskInfo);
+      li.appendChild(actions);
+      taskList.appendChild(li);
+      saveTasks();
+    }
+
+    function updateStatusText(el, isCompleted) {
+      el.textContent = isCompleted ? 'Status: Complete ✅' : 'Status: Incomplete ⏳';
+    }
+
+    function addTask() {
+      const taskText = taskInput.value.trim();
+      if (taskText !== '') {
+        createTask(taskText);
+        taskInput.value = '';
+      }
+    }
+  </script>
+
+</body>
+</html>
